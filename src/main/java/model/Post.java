@@ -9,57 +9,30 @@ import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 
-public class Comment {
+public class Post {
 
-    public static String getCommentByID(int id) {
+    public static String getPostByID(int id) {
         ArangoDB arangoDB = new ArangoDB.Builder().build();
         String dbName = "scalable";
-        String collectionName = "Comments";
+        String collectionName = "post";
         JSONObject commentObjectM = new JSONObject();
-        JSONArray commentArray = new JSONArray();
-        //Read Document
-        //haygeely id harod b list ids
         try {
             BaseDocument myDocument = arangoDB.db(dbName).collection(collectionName).getDocument("" + id,
                     BaseDocument.class);
 
-            commentObjectM.put("VideoID",myDocument.getAttribute("video_id "));
-            commentObjectM.put("Text",myDocument.getAttribute("text"));
+            commentObjectM.put("Channel ID",myDocument.getAttribute("channel_id"));
+            commentObjectM.put("Context",myDocument.getAttribute("context"));
             commentObjectM.put("Likes",myDocument.getAttribute("likes"));
             commentObjectM.put("Dislikes",myDocument.getAttribute("dislikes"));
-            commentObjectM.put("ChannelID",myDocument.getAttribute("user"));
-
-            ArrayList<Integer> mentionsArray = new ArrayList<>();
-            mentionsArray = (ArrayList) myDocument.getAttribute("mentions");
-            ArrayList<JSONObject> mentionsNamesArray = new ArrayList<>();
-
-            for (int i = 0; i < mentionsArray.size(); i++) {
-                try {
-                    BaseDocument myDocument2 = arangoDB.db(dbName).collection("Channels").getDocument("" + mentionsArray.get(i),
-                            BaseDocument.class);
-                    JSONObject channelObject = new JSONObject();
-                    JSONObject info = new JSONObject();
-                    info.put("Info",myDocument2.getAttribute("info"));
-                    String name = ""; //info.get("name");
-                    String profpic = ""; //info.get("profile_pic");
-                    channelObject.put("Name", name);
-                    channelObject.put("Profile Picture", profpic);
-                    mentionsNamesArray.add(channelObject);
-                }
-                catch (ArangoDBException e) {
-                    System.err.println("Failed to get document: myKey; " + e.getMessage());
-                }
-            }
-            commentObjectM.put("mentions",mentionsNamesArray);
+            commentObjectM.put("Channel ID",myDocument.getAttribute("user"));
+            commentObjectM.put("Mentions IDs",myDocument.getAttribute("mentions"));
+            commentObjectM.put("Reply IDs",myDocument.getAttribute("replies"));
         } catch (ArangoDBException e) {
             System.err.println("Failed to get document: myKey; " + e.getMessage());
         }
-
-
         return commentObjectM.toString();
-
     }
-    //Comment for Videos by title and for Channel by name
+    //Post for Videos by title and for Channel by name
 //    public static String getSearch(String s) {
 //        ArangoDB arangoDB = new ArangoDB.Builder().build();
 //        String dbName = "scalable";
@@ -136,19 +109,19 @@ public class Comment {
 //        } catch (ArangoDBException e) {
 //            System.err.println("Failed to execute query. " + e.getMessage());
 //        }
-//        System.out.println("Comment Object" + searchObjectTotal.toString());
+//        System.out.println("Post Object" + searchObjectTotal.toString());
 //        return searchObjectTotal.toString();
 //
 //
 //    }
 
-    public static String createComment(int video_id, String text, JSONArray likes, JSONArray dislikes, int user_id, JSONArray mentions, JSONArray replies){
+    public static String createPost(int channel_id, String context, JSONArray likes, JSONArray dislikes, int user_id, JSONArray mentions, JSONArray replies){
         ArangoDB arangoDB = new ArangoDB.Builder().build();
         String dbName = "scalable";
-        String collectionName = "comments";
+        String collectionName = "post";
         BaseDocument myObject = new BaseDocument();
-        myObject.addAttribute("video_id",video_id);
-        myObject.addAttribute("text",text);
+        myObject.addAttribute("channel_id",channel_id);
+        myObject.addAttribute("context",context);
         myObject.addAttribute("likes",likes);
         myObject.addAttribute("dislikes",dislikes);
         myObject.addAttribute("user",user_id);
@@ -165,21 +138,21 @@ public class Comment {
 
 
 
-    public static String deleteCommentByID(int id){
+    public static String deletePostByID(int id){
         ArangoDB arangoDB = new ArangoDB.Builder().build();
         String dbName = "scalable";
-        String collectionName = "comments";
+        String collectionName = "post";
         try {
         arangoDB.db(dbName).collection(collectionName).deleteDocument(""+id);
         }catch (ArangoDBException e){
             System.err.println("Failed to delete document. " + e.getMessage());
         }
-        return "Comment Deleted";
+        return "Post Deleted";
     }
     public static String deleteReplyByID(int comment_id,int reply_id){
         ArangoDB arangoDB = new ArangoDB.Builder().build();
         String dbName = "scalable";
-        String collectionName = "comments";
+        String collectionName = "post";
         BaseDocument myDocument = arangoDB.db(dbName).collection(collectionName).getDocument("" + comment_id,
                 BaseDocument.class);
         try {
