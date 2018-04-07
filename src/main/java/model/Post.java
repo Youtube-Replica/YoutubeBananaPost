@@ -168,24 +168,23 @@ public class Post {
         return "Reply Deleted";
         }
 
-    public static String updateComment(int comment_id ,int video_id, String text, JSONArray likes, JSONArray dislikes, int user_id, JSONArray mentions, JSONArray replies){
+    public static String updatePost(int post_id ,int channel_id, String context, JSONArray likes, JSONArray dislikes, int user_id, JSONArray mentions, JSONArray replies){
         ArangoDB arangoDB = new ArangoDB.Builder().build();
         String dbName = "scalable";
-        String collectionName = "comments";
-        BaseDocument myObject = arangoDB.db(dbName).collection(collectionName).getDocument("" + comment_id,
+        String collectionName = "post";
+        BaseDocument myObject = arangoDB.db(dbName).collection(collectionName).getDocument("" + post_id,
                 BaseDocument.class);
 
-        myObject.updateAttribute("video_id",video_id);
-        myObject.updateAttribute("text",text);
+        myObject.updateAttribute("channel_id",channel_id);
+        myObject.updateAttribute("context",context);
         myObject.updateAttribute("likes",likes);
         myObject.updateAttribute("dislikes",dislikes);
         myObject.updateAttribute("user",user_id);
         myObject.updateAttribute("mentions",mentions);
         myObject.updateAttribute("replies",replies);
         try {
-            arangoDB.db(dbName).collection(collectionName).deleteDocument(""+comment_id);
+            arangoDB.db(dbName).collection(collectionName).deleteDocument(""+post_id);
             arangoDB.db(dbName).collection(collectionName).insertDocument(myObject);
-            System.out.println("Document created");
         } catch (ArangoDBException e) {
             System.err.println("Failed to create document. " + e.getMessage());
         }
