@@ -12,7 +12,8 @@ import java.util.ArrayList;
 public class Post {
 
     public static String getPostByID(int id) {
-        ArangoDB arangoDB = new ArangoDB.Builder().build();
+        String host = System.getenv("ARANGO_DB_SERVICE_HOST");
+        ArangoDB arangoDB = new ArangoDB.Builder().host(host, 8529).build();
         String dbName = "scalable";
         String collectionName = "post";
         JSONObject commentObjectM = new JSONObject();
@@ -116,7 +117,8 @@ public class Post {
 //    }
 
     public static String createPost(int channel_id, String context, JSONArray likes, JSONArray dislikes, int user_id, JSONArray mentions, JSONArray replies){
-        ArangoDB arangoDB = new ArangoDB.Builder().build();
+        String host = System.getenv("ARANGO_DB_SERVICE_HOST");
+        ArangoDB arangoDB = new ArangoDB.Builder().host(host, 8529).build();
         String dbName = "scalable";
         String collectionName = "post";
         BaseDocument myObject = new BaseDocument();
@@ -139,7 +141,8 @@ public class Post {
 
 
     public static String deletePostByID(int id){
-        ArangoDB arangoDB = new ArangoDB.Builder().build();
+        String host = System.getenv("ARANGO_DB_SERVICE_HOST");
+        ArangoDB arangoDB = new ArangoDB.Builder().host(host, 8529).build();
         String dbName = "scalable";
         String collectionName = "post";
         try {
@@ -150,7 +153,8 @@ public class Post {
         return "Post Deleted";
     }
     public static String deleteReplyByID(int comment_id,int reply_id){
-        ArangoDB arangoDB = new ArangoDB.Builder().build();
+        String host = System.getenv("ARANGO_DB_SERVICE_HOST");
+        ArangoDB arangoDB = new ArangoDB.Builder().host(host, 8529).build();
         String dbName = "scalable";
         String collectionName = "post";
         BaseDocument myDocument = arangoDB.db(dbName).collection(collectionName).getDocument("" + comment_id,
@@ -169,7 +173,8 @@ public class Post {
         }
 
     public static String updatePost(int post_id ,int channel_id, String context, JSONArray likes, JSONArray dislikes, int user_id, JSONArray mentions, JSONArray replies){
-        ArangoDB arangoDB = new ArangoDB.Builder().build();
+        String host = System.getenv("ARANGO_DB_SERVICE_HOST");
+        ArangoDB arangoDB = new ArangoDB.Builder().host(host, 8529).build();
         String dbName = "scalable";
         String collectionName = "post";
         BaseDocument myObject = arangoDB.db(dbName).collection(collectionName).getDocument("" + post_id,
